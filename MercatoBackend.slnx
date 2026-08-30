@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="MercatoAPI/MercatoAPI.csproj" />
+  <Project Path="MercatoApplication/MercatoApplication.csproj" />
+  <Project Path="MercatoDomain/MercatoDomain.csproj" />
+  <Project Path="MercatoInfrastructure/MercatoInfrastructure.csproj" />
+</Solution>
