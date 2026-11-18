@@ -7,15 +7,11 @@ namespace MercatoInfrastructure.Persistence.Context;
 // Every DbSet<T> below represents one database table.
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options)
-        : base(options)
-    {
-    }
-
-    // Entities 
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    // Entities-Overall
     //Identity 
     public DbSet<Role> Roles => Set<Role>();
-    public DbSet<User> Users => Set<User>(); 
+    public DbSet<User> Users => Set<User>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>(); 
     public DbSet<Address> Addresses => Set<Address>(); 
     // Catalog 
@@ -47,6 +43,32 @@ public class AppDbContext : DbContext
     public DbSet<Review> Reviews => Set<Review>(); 
     public DbSet<Notification> Notifications => Set<Notification>(); 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+
+    // Multi-Tenant / Partners & Affiliates
+    public DbSet<Partner> Partners => Set<Partner>();
+    public DbSet<PartnerPermission> PartnerPermissions => Set<PartnerPermission>();
+    public DbSet<Merchant> Merchants => Set<Merchant>();
+    public DbSet<Affiliate> Affiliates => Set<Affiliate>();
+    public DbSet<MerchantAffiliate> MerchantAffiliates => Set<MerchantAffiliate>();
+    public DbSet<AffiliateCommissionRecord> AffiliateCommissionRecords => Set<AffiliateCommissionRecord>();
+    public DbSet<PartnerAffiliate> PartnerAffiliates => Set<PartnerAffiliate>();
+
+    // Monetization / Subscriptions
+    public DbSet<SubscriptionPlan> SubscriptionPlans => Set<SubscriptionPlan>();
+    public DbSet<MerchantSubscription> MerchantSubscriptions => Set<MerchantSubscription>();
+
+    // B2B Wholesale
+    public DbSet<B2BTieredPrice> B2BTieredPrices => Set<B2BTieredPrice>();
+
+    // Wallets & Financial Ledger
+    public DbSet<Wallet> Wallets => Set<Wallet>();
+    public DbSet<WalletTransaction> WalletTransactions => Set<WalletTransaction>();
+
+    // Scoped Chatting System
+    public DbSet<Conversation> Conversations => Set<Conversation>();
+    public DbSet<ConversationParticipant> ConversationParticipants => Set<ConversationParticipant>();
+    public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
+    public DbSet<ChatMessageUserDeletion> ChatMessageUserDeletions => Set<ChatMessageUserDeletion>();
 
     // EF Core automatically calls this method when it needs to build the database model.
     // Instead of manually registering each Configuration class one by one,

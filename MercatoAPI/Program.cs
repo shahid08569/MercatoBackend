@@ -1,16 +1,19 @@
 //API documentation page
+using Asp.Versioning;
+using MercatoAPI.Hubs;
 using MercatoAPI.Middleware;
 using MercatoApplication.Common;
+using MercatoApplication.Interfaces;
+using MercatoInfrastructure.Authentication;
 using MercatoInfrastructure.Persistence.Context;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using MercatoInfrastructure.Services;
 using Scalar.AspNetCore;
 using Serilog;
-using Microsoft.AspNetCore.RateLimiting;
-using Asp.Versioning;
-using MercatoInfrastructure.Authentication;
-using MercatoApplication.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 //Serilog Logging configuration
@@ -42,6 +45,9 @@ builder.Host.UseSerilog();
 // Add services to the container.
 builder.Services.AddControllers();
 
+// Register SignalR real-time service
+builder.Services.AddSignalR();
+
 //Adding Api Versioning Service
 builder.Services.AddApiVersioning(options =>
 {
@@ -68,6 +74,11 @@ builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IMerchantService, MerchantService>();
+builder.Services.AddScoped<ProductValidator>();
+builder.Services.AddScoped<IMerchantProductService, MerchantProductService>();
+builder.Services.AddScoped<IPublicCatalogService, PublicCatalogService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
@@ -83,7 +94,24 @@ options.TokenValidationParameters = new TokenValidationParameters
     ClockSkew = TimeSpan.Zero
    // no extra grace period after expiry
  };
+// Allow JWT authentication via query string for SignalR WebSockets
+options.Events = new JwtBearerEvents
+{
+    OnMessageReceived = context =>
+    {
+        var accessToken = context.Request.Query["access_token"];
+        var path = context.HttpContext.Request.Path;
+        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/chat"))
+        {
+            context.Token = accessToken;
+        }
+        return Task.CompletedTask;
+    }
+};
  });
+
+
+
 //dependency injection for password hashing service
 builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
 
@@ -113,7 +141,9 @@ using(var scope = app.Services.CreateScope())
     {
         db.Roles.AddRange(
             new MercatoDomain.Entities.Role { Name = "Customer" },
-            new MercatoDomain.Entities.Role { Name = "Admin" },
+            new MercatoDomain.Entities.Role { Name = "Merchant" },
+            new MercatoDomain.Entities.Role { Name = "Affiliate" },
+            new MercatoDomain.Entities.Role { Name = "PlatformPartner" },
             new MercatoDomain.Entities.Role { Name = "SuperAdmin" }
             );
         db.SaveChanges();
@@ -164,5 +194,8 @@ app.MapGet("/api/v1/health/db", async (AppDbContext db) =>
         databaseConnected = canConnect
     });
 });
+
+// Map SignalR Chat Hub endpoint
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();
