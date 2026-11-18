@@ -69,6 +69,98 @@ namespace MercatoInfrastructure.Migrations
                     b.ToTable("Addresses");
                 });
 
+            modelBuilder.Entity("MercatoDomain.Entities.Affiliate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AffiliateCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PayoutAccountNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PayoutMethod")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AffiliateCode")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Affiliates");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.AffiliateCommissionRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AdminOverrideReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("AffiliateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("CommissionAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CommissionPercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MerchantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("SaleAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TransferredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("TransferredByUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AffiliateId");
+
+                    b.HasIndex("MerchantId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("AffiliateCommissionRecords");
+                });
+
             modelBuilder.Entity("MercatoDomain.Entities.AuditLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -103,6 +195,31 @@ namespace MercatoInfrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AuditLogs");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.B2BTieredPrice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("MaxQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("B2BTieredPrices");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.Brand", b =>
@@ -194,6 +311,167 @@ namespace MercatoInfrastructure.Migrations
                     b.HasIndex("ParentCategoryId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.ChatMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AttachmentFileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("AttachmentSizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("AttachmentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AttachmentUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeliveredAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DeliveryStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EditedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeletedForEveryone")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEdited")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("SenderUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("SenderUserId");
+
+                    b.HasIndex("SentAt");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.ChatMessageUserDeletion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChatMessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ChatMessageId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("ChatMessageUserDeletions");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.Conversation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastMessageAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("MerchantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LastMessageAt");
+
+                    b.HasIndex("MerchantId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("Type");
+
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.ConversationParticipant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsMuted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("ConversationId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("ConversationParticipants");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.Coupon", b =>
@@ -306,6 +584,129 @@ namespace MercatoInfrastructure.Migrations
                     b.HasIndex("ProductVariantId");
 
                     b.ToTable("InventoryAdjustments");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.Merchant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("BusinessModel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BusinessRegNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("CustomPlatformCommissionRate")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("DefaultAffiliateCommissionRate")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("OwnerUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("StoreName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("StoreSlug")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("VerificationStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerUserId");
+
+                    b.HasIndex("PartnerId");
+
+                    b.HasIndex("StoreSlug")
+                        .IsUnique();
+
+                    b.ToTable("Merchants");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.MerchantAffiliate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AffiliateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("CustomCommissionRate")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LinkedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MerchantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AffiliateId");
+
+                    b.HasIndex("MerchantId", "AffiliateId")
+                        .IsUnique();
+
+                    b.ToTable("MerchantAffiliates");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.MerchantSubscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AutoRenew")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MerchantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SubscriptionPlanId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MerchantId");
+
+                    b.HasIndex("SubscriptionPlanId");
+
+                    b.ToTable("MerchantSubscriptions");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.Notification", b =>
@@ -492,6 +893,99 @@ namespace MercatoInfrastructure.Migrations
                     b.ToTable("OrderItems");
                 });
 
+            modelBuilder.Entity("MercatoDomain.Entities.Partner", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AssignedTerritory")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("RevenueSharePercentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Partners");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.PartnerAffiliate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AffiliateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("CommissionRate")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LinkedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AffiliateId");
+
+                    b.HasIndex("PartnerId", "AffiliateId")
+                        .IsUnique();
+
+                    b.ToTable("PartnerAffiliates");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.PartnerPermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsGranted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("PartnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PermissionKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PartnerId", "PermissionKey")
+                        .IsUnique();
+
+                    b.ToTable("PartnerPermissions");
+                });
+
             modelBuilder.Entity("MercatoDomain.Entities.PaymentAttempt", b =>
                 {
                     b.Property<Guid>("Id")
@@ -594,17 +1088,35 @@ namespace MercatoInfrastructure.Migrations
                     b.Property<Guid?>("BrandId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("C2CSellerUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Condition")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("CustomAffiliateCommissionRate")
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<int>("ListingType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("MerchantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("MinimumOrderQuantity")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -624,7 +1136,11 @@ namespace MercatoInfrastructure.Migrations
 
                     b.HasIndex("BrandId");
 
+                    b.HasIndex("C2CSellerUserId");
+
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("MerchantId");
 
                     b.HasIndex("Name");
 
@@ -825,6 +1341,40 @@ namespace MercatoInfrastructure.Migrations
                     b.ToTable("StockReservations");
                 });
 
+            modelBuilder.Entity("MercatoDomain.Entities.SubscriptionPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AllowB2BFeatures")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxProducts")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("PlatformCommissionDiscountRate")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("PriceMonthly")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SubscriptionPlans");
+                });
+
             modelBuilder.Entity("MercatoDomain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -910,6 +1460,81 @@ namespace MercatoInfrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("VariantAttributeValues");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.Wallet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AvailableBalance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("OwnerType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PendingEscrowBalance")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "OwnerType")
+                        .IsUnique();
+
+                    b.ToTable("Wallets");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.WalletTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BalanceAfter")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<Guid?>("ReferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TransactionType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WalletId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReferenceId");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("WalletTransactions");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.Wishlist", b =>
@@ -998,6 +1623,44 @@ namespace MercatoInfrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MercatoDomain.Entities.Affiliate", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.AffiliateCommissionRecord", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.Affiliate", "Affiliate")
+                        .WithMany()
+                        .HasForeignKey("AffiliateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MercatoDomain.Entities.Merchant", "Merchant")
+                        .WithMany()
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MercatoDomain.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Affiliate");
+
+                    b.Navigation("Merchant");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("MercatoDomain.Entities.AuditLog", b =>
                 {
                     b.HasOne("MercatoDomain.Entities.User", "User")
@@ -1006,6 +1669,17 @@ namespace MercatoInfrastructure.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.B2BTieredPrice", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.Product", "Product")
+                        .WithMany("B2BTieredPrices")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.Cart", b =>
@@ -1046,6 +1720,87 @@ namespace MercatoInfrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.ChatMessage", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.Conversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MercatoDomain.Entities.User", "SenderUser")
+                        .WithMany()
+                        .HasForeignKey("SenderUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("SenderUser");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.ChatMessageUserDeletion", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.ChatMessage", "ChatMessage")
+                        .WithMany("UserDeletions")
+                        .HasForeignKey("ChatMessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MercatoDomain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ChatMessage");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.Conversation", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.Merchant", "Merchant")
+                        .WithMany()
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MercatoDomain.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MercatoDomain.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Merchant");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Partner");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.ConversationParticipant", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.Conversation", "Conversation")
+                        .WithMany("Participants")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MercatoDomain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.CouponUsage", b =>
@@ -1091,6 +1846,62 @@ namespace MercatoInfrastructure.Migrations
                     b.Navigation("CreatedByUser");
 
                     b.Navigation("ProductVariant");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.Merchant", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.User", "OwnerUser")
+                        .WithMany()
+                        .HasForeignKey("OwnerUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MercatoDomain.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("OwnerUser");
+
+                    b.Navigation("Partner");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.MerchantAffiliate", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.Affiliate", "Affiliate")
+                        .WithMany("MerchantLinks")
+                        .HasForeignKey("AffiliateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MercatoDomain.Entities.Merchant", "Merchant")
+                        .WithMany()
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Affiliate");
+
+                    b.Navigation("Merchant");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.MerchantSubscription", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.Merchant", "Merchant")
+                        .WithMany()
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MercatoDomain.Entities.SubscriptionPlan", "SubscriptionPlan")
+                        .WithMany()
+                        .HasForeignKey("SubscriptionPlanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Merchant");
+
+                    b.Navigation("SubscriptionPlan");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.Notification", b =>
@@ -1158,6 +1969,47 @@ namespace MercatoInfrastructure.Migrations
                     b.Navigation("ProductVariant");
                 });
 
+            modelBuilder.Entity("MercatoDomain.Entities.Partner", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.PartnerAffiliate", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.Affiliate", "Affiliate")
+                        .WithMany("PartnerLinks")
+                        .HasForeignKey("AffiliateId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MercatoDomain.Entities.Partner", "Partner")
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Affiliate");
+
+                    b.Navigation("Partner");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.PartnerPermission", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.Partner", "Partner")
+                        .WithMany("Permissions")
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Partner");
+                });
+
             modelBuilder.Entity("MercatoDomain.Entities.PaymentAttempt", b =>
                 {
                     b.HasOne("MercatoDomain.Entities.Order", "Order")
@@ -1187,15 +2039,29 @@ namespace MercatoInfrastructure.Migrations
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("MercatoDomain.Entities.User", "C2CSellerUser")
+                        .WithMany()
+                        .HasForeignKey("C2CSellerUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("MercatoDomain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MercatoDomain.Entities.Merchant", "Merchant")
+                        .WithMany("Products")
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Brand");
 
+                    b.Navigation("C2CSellerUser");
+
                     b.Navigation("Category");
+
+                    b.Navigation("Merchant");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.ProductImage", b =>
@@ -1306,6 +2172,28 @@ namespace MercatoInfrastructure.Migrations
                     b.Navigation("VariantAttribute");
                 });
 
+            modelBuilder.Entity("MercatoDomain.Entities.Wallet", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.WalletTransaction", b =>
+                {
+                    b.HasOne("MercatoDomain.Entities.Wallet", "Wallet")
+                        .WithMany("Transactions")
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Wallet");
+                });
+
             modelBuilder.Entity("MercatoDomain.Entities.Wishlist", b =>
                 {
                     b.HasOne("MercatoDomain.Entities.User", "User")
@@ -1355,6 +2243,13 @@ namespace MercatoInfrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MercatoDomain.Entities.Affiliate", b =>
+                {
+                    b.Navigation("MerchantLinks");
+
+                    b.Navigation("PartnerLinks");
+                });
+
             modelBuilder.Entity("MercatoDomain.Entities.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -1372,9 +2267,26 @@ namespace MercatoInfrastructure.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("MercatoDomain.Entities.ChatMessage", b =>
+                {
+                    b.Navigation("UserDeletions");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.Conversation", b =>
+                {
+                    b.Navigation("Messages");
+
+                    b.Navigation("Participants");
+                });
+
             modelBuilder.Entity("MercatoDomain.Entities.Coupon", b =>
                 {
                     b.Navigation("CouponUsages");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.Merchant", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.Order", b =>
@@ -1390,6 +2302,11 @@ namespace MercatoInfrastructure.Migrations
                     b.Navigation("StockReservations");
                 });
 
+            modelBuilder.Entity("MercatoDomain.Entities.Partner", b =>
+                {
+                    b.Navigation("Permissions");
+                });
+
             modelBuilder.Entity("MercatoDomain.Entities.PaymentAttempt", b =>
                 {
                     b.Navigation("PaymentTransactions");
@@ -1397,6 +2314,8 @@ namespace MercatoInfrastructure.Migrations
 
             modelBuilder.Entity("MercatoDomain.Entities.Product", b =>
                 {
+                    b.Navigation("B2BTieredPrices");
+
                     b.Navigation("ProductImages");
 
                     b.Navigation("ProductVariants");
@@ -1422,6 +2341,11 @@ namespace MercatoInfrastructure.Migrations
             modelBuilder.Entity("MercatoDomain.Entities.VariantAttribute", b =>
                 {
                     b.Navigation("VariantAttributeValues");
+                });
+
+            modelBuilder.Entity("MercatoDomain.Entities.Wallet", b =>
+                {
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.Wishlist", b =>
