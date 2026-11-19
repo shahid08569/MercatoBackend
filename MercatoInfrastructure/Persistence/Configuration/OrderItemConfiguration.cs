@@ -17,8 +17,13 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
                .HasForeignKey(oi => oi.OrderId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        // Nullable + SetNull: order history survives even if the variant is later removed,
-        // because the snapshot fields (ProductNameSnapshot, SkuSnapshot, etc.) hold the truth
+        // Merchant relationship for line items
+        builder.HasOne(oi => oi.Merchant)
+               .WithMany()
+               .HasForeignKey(oi => oi.MerchantId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+        // Nullable + SetNull: order history survives even if the variant is later removed
         builder.HasOne(oi => oi.ProductVariant)
                .WithMany()
                .HasForeignKey(oi => oi.ProductVariantId)

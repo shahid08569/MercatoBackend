@@ -761,13 +761,23 @@ namespace MercatoInfrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<Guid?>("MerchantId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("OrderNumber")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<Guid?>("ParentOrderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("ShippingCost")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ShippingCourier")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -780,6 +790,10 @@ namespace MercatoInfrastructure.Migrations
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TrackingNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -795,8 +809,12 @@ namespace MercatoInfrastructure.Migrations
 
                     b.HasIndex("CouponId");
 
+                    b.HasIndex("MerchantId");
+
                     b.HasIndex("OrderNumber")
                         .IsUnique();
+
+                    b.HasIndex("ParentOrderId");
 
                     b.HasIndex("UserId", "IdempotencyKey")
                         .IsUnique();
@@ -861,6 +879,9 @@ namespace MercatoInfrastructure.Migrations
                     b.Property<decimal>("DiscountAppliedAtPurchase")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid?>("MerchantId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -885,6 +906,8 @@ namespace MercatoInfrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MerchantId");
 
                     b.HasIndex("OrderId");
 
@@ -1927,6 +1950,16 @@ namespace MercatoInfrastructure.Migrations
                         .HasForeignKey("CouponId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("MercatoDomain.Entities.Merchant", "Merchant")
+                        .WithMany()
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MercatoDomain.Entities.Order", "ParentOrder")
+                        .WithMany("SubOrders")
+                        .HasForeignKey("ParentOrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("MercatoDomain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -1936,6 +1969,10 @@ namespace MercatoInfrastructure.Migrations
                     b.Navigation("CheckoutSession");
 
                     b.Navigation("Coupon");
+
+                    b.Navigation("Merchant");
+
+                    b.Navigation("ParentOrder");
 
                     b.Navigation("User");
                 });
@@ -1953,6 +1990,11 @@ namespace MercatoInfrastructure.Migrations
 
             modelBuilder.Entity("MercatoDomain.Entities.OrderItem", b =>
                 {
+                    b.HasOne("MercatoDomain.Entities.Merchant", "Merchant")
+                        .WithMany()
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("MercatoDomain.Entities.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
@@ -1963,6 +2005,8 @@ namespace MercatoInfrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ProductVariantId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Merchant");
 
                     b.Navigation("Order");
 
@@ -2300,6 +2344,8 @@ namespace MercatoInfrastructure.Migrations
                     b.Navigation("PaymentAttempts");
 
                     b.Navigation("StockReservations");
+
+                    b.Navigation("SubOrders");
                 });
 
             modelBuilder.Entity("MercatoDomain.Entities.Partner", b =>

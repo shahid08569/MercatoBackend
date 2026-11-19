@@ -79,6 +79,7 @@ builder.Services.AddScoped<ProductValidator>();
 builder.Services.AddScoped<IMerchantProductService, MerchantProductService>();
 builder.Services.AddScoped<IPublicCatalogService, PublicCatalogService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
