@@ -21,9 +21,25 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.ShippingCost).HasColumnType("decimal(18,2)");
         builder.Property(o => o.TotalAmount).HasColumnType("decimal(18,2)");
 
+        // Tracking & Courier details
+        builder.Property(o => o.TrackingNumber).HasMaxLength(100);
+        builder.Property(o => o.ShippingCourier).HasMaxLength(100);
+
         builder.HasOne(o => o.User)
                .WithMany()
                .HasForeignKey(o => o.UserId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+        // Multi-Vendor Hierarchy: Parent-to-SubOrders self-referencing relationship
+        builder.HasOne(o => o.ParentOrder)
+               .WithMany(o => o.SubOrders)
+               .HasForeignKey(o => o.ParentOrderId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+        // Merchant ownership for Sub-Orders
+        builder.HasOne(o => o.Merchant)
+               .WithMany()
+               .HasForeignKey(o => o.MerchantId)
                .OnDelete(DeleteBehavior.Restrict);
 
         // Nullable FKs use SetNull - historical order data must survive
