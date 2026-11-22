@@ -80,6 +80,13 @@ builder.Services.AddScoped<IMerchantProductService, MerchantProductService>();
 builder.Services.AddScoped<IPublicCatalogService, PublicCatalogService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IAffiliateService, AffiliateService>(); 
+builder.Services.AddScoped<IWalletSettlementService, WalletSettlementService>();
+
+// Register in-memory cache for Live Forex rates
+builder.Services.AddMemoryCache();
+// Register Live Currency Exchange Service with HttpClient
+builder.Services.AddHttpClient<ICurrencyExchangeService, CurrencyExchangeService>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
