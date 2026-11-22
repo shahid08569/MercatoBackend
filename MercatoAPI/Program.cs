@@ -2,6 +2,7 @@
 using Asp.Versioning;
 using MercatoAPI.Hubs;
 using MercatoAPI.Middleware;
+using MercatoAPI.Services;
 using MercatoApplication.Common;
 using MercatoApplication.Interfaces;
 using MercatoInfrastructure.Authentication;
@@ -82,6 +83,8 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAffiliateService, AffiliateService>(); 
 builder.Services.AddScoped<IWalletSettlementService, WalletSettlementService>();
+builder.Services.AddScoped<IChatNotificationService, SignalRChatNotificationService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
 // Register in-memory cache for Live Forex rates
 builder.Services.AddMemoryCache();
