@@ -12,11 +12,16 @@ public class MerchantProductService : IMerchantProductService
 {
     private readonly AppDbContext _db;
     private readonly ProductValidator _validator;
+    private readonly ISubscriptionService _subscriptionService;
 
-    public MerchantProductService(AppDbContext db, ProductValidator validator)
+    public MerchantProductService(
+        AppDbContext db,
+        ProductValidator validator,
+        ISubscriptionService subscriptionService)
     {
         _db = db;
         _validator = validator;
+        _subscriptionService = subscriptionService;
     }
 
     // Creates a new product listing (B2C, B2B wholesale, or C2C)
@@ -44,6 +49,22 @@ public class MerchantProductService : IMerchantProductService
                 return ApiResponse<ProductResponseDto>.FailureResponse("You must have an active Store to list B2C or B2B products.");
 
             merchantId = merchant.Id;
+
+            // Feature Gating 1: Check max products limit for the merchant's subscription plan
+            var canAddResult = await _subscriptionService.CanMerchantAddMoreProductsAsync(merchant.Id);
+            if (!canAddResult.Success)
+                return ApiResponse<ProductResponseDto>.FailureResponse(canAddResult.Error ?? "Product listing limit reached.");
+
+            // Feature Gating 2: Check B2B wholesale access if creating B2B listing or tiered pricing
+            bool isB2BRequest = request.ListingType == ProductListingType.B2B ||
+                                (request.B2BTieredPrices != null && request.B2BTieredPrices.Any());
+
+            if (isB2BRequest)
+            {
+                var canB2BResult = await _subscriptionService.CanMerchantUseB2BFeaturesAsync(merchant.Id);
+                if (!canB2BResult.Success)
+                    return ApiResponse<ProductResponseDto>.FailureResponse(canB2BResult.Error ?? "B2B features require an upgraded plan.");
+            }
         }
 
         // 3. Create Product entity
