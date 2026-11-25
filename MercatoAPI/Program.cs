@@ -86,6 +86,7 @@ builder.Services.AddScoped<IWalletSettlementService, WalletSettlementService>();
 builder.Services.AddScoped<IChatNotificationService, SignalRChatNotificationService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<IPartnerGovernanceService, PartnerGovernanceService>();
 
 // Register in-memory cache for Live Forex rates
 builder.Services.AddMemoryCache();
